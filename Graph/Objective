@@ -1,4 +1,0 @@
-Represent each mining site as a vertex in a weighted graph.
-Represent each candidate pipeline or cable as an edge, with its cost as the weight.
-Use Prim’s algorithm to find a minimum spanning tree connecting all sites.
-Display the selected connections and the total network cost.
