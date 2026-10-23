@@ -1,0 +1,91 @@
+#include <iostream>
+#include <queue>
+#include <string>
+#include <utility>
+#include <vector>
+
+using namespace std;
+
+struct Edge {
+    int destination;
+    int cost;
+};
+
+struct Candidate {
+    int cost;
+    int from;
+    int to;
+
+    bool operator>(const Candidate& other) const {
+        return cost > other.cost;
+    }
+};
+
+int main() {
+    const vector<string> sites = {
+        "North Pit", "Crusher", "Processing Plant", "Camp", "Power Station"
+    };
+
+    // Add each pipeline or cable as an undirected, weighted edge.
+    vector<vector<Edge>> graph(sites.size());
+
+    auto addCandidate = [&](int a, int b, int cost) {
+        graph[a].push_back({b, cost});
+        graph[b].push_back({a, cost});
+    };
+
+    addCandidate(0, 1, 4);  // North Pit - Crusher
+    addCandidate(0, 2, 7);  // North Pit - Processing Plant
+    addCandidate(0, 3, 9);  // North Pit - Camp
+    addCandidate(1, 2, 2);  // Crusher - Processing Plant
+    addCandidate(1, 3, 6);  // Crusher - Camp
+    addCandidate(1, 4, 8);  // Crusher - Power Station
+    addCandidate(2, 3, 3);  // Processing Plant - Camp
+    addCandidate(2, 4, 5);  // Processing Plant - Power Station
+    addCandidate(3, 4, 4);  // Camp - Power Station
+
+    const int start = 0;
+    vector<bool> inNetwork(sites.size(), false);
+    priority_queue<Candidate, vector<Candidate>, greater<Candidate>> candidates;
+    vector<Candidate> selected;
+    long long totalCost = 0;
+
+    inNetwork[start] = true;
+
+    for (const Edge& edge : graph[start]) {
+        candidates.push({edge.cost, start, edge.destination});
+    }
+
+    while (!candidates.empty() && selected.size() < sites.size() - 1) {
+        Candidate edge = candidates.top();
+        candidates.pop();
+
+        if (inNetwork[edge.to]) {
+            continue;
+        }
+
+        inNetwork[edge.to] = true;
+        selected.push_back(edge);
+        totalCost += edge.cost;
+
+        for (const Edge& next : graph[edge.to]) {
+            if (!inNetwork[next.destination]) {
+                candidates.push({next.cost, edge.to, next.destination});
+            }
+        }
+    }
+
+    if (selected.size() != sites.size() - 1) {
+        cout << "Unable to connect all mining sites; the candidate network is disconnected.\n";
+        return 1;
+    }
+
+    cout << "Selected pipelines/cables (minimum spanning tree):\n";
+    for (const Candidate& edge : selected) {
+        cout << sites[edge.from] << " -- " << sites[edge.to]
+             << " : " << edge.cost << '\n';
+    }
+
+    cout << "Final network cost: " << totalCost << " cost units\n";
+    return 0;
+}
