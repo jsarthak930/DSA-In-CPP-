@@ -1,7 +1,0 @@
-Create a graph of mining sites and candidate connections.
-Choose a starting site and add it to the network.
-Place its outgoing edges in a minimum-priority queue.
-Repeatedly select the lowest-cost edge that connects a site in the network to a site outside it.
-Add that edge and new site to the network; add the new site’s eligible edges to the queue.
-Continue until all sites are connected or no eligible edges remain.
-Display the selected edges and their total cost. If some sites remain disconnected, report that no complete network is possible.
