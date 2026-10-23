@@ -1,0 +1,2 @@
+Develop a C++ program to represent mining sites as vertices and candidate pipelines or cables as weighted edges. 
+Apply Prim's algorithm to connect the sites with minimum total cost. Display each selected edge and the final network cost
