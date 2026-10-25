@@ -1,0 +1,4 @@
+Objective
+To implement Prim’s Algorithm in C++ to construct a minimum-cost network connecting mining sites.
+The program should allow edge-weight updates, display the selected edges with their individual weights and running total cost,
+and detect disconnected graphs to report whether a spanning tree can be formed.
