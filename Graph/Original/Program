@@ -1,91 +1,120 @@
-#include <iostream>
-#include <queue>
-#include <string>
-#include <utility>
-#include <vector>
 
+#include <iostream>
+#include <vector>
+#include <climits>
 using namespace std;
 
-struct Edge {
-    int destination;
-    int cost;
-};
+const int INF = INT_MAX;
 
-struct Candidate {
-    int cost;
-    int from;
-    int to;
+void primMST(const vector<vector<int>>& graph, int n) {
+    vector<int> key(n, INF);
+    vector<int> parent(n, -1);
+    vector<bool> inMST(n, false);
 
-    bool operator>(const Candidate& other) const {
-        return cost > other.cost;
-    }
-};
+    key[0] = 0;
+    int totalCost = 0;
+    int edgesSelected = 0;
 
-int main() {
-    const vector<string> sites = {
-        "North Pit", "Crusher", "Processing Plant", "Camp", "Power Station"
-    };
+    cout << "\nMinimum Spanning Tree (MST)\n";
+    cout << "----------------------------------\n";
+    cout << "Selected Edge\tInstallation Cost\n";
 
-    // Add each pipeline or cable as an undirected, weighted edge.
-    vector<vector<Edge>> graph(sites.size());
+    for (int count = 0; count < n; count++) {
+        int u = -1;
+        int minKey = INF;
 
-    auto addCandidate = [&](int a, int b, int cost) {
-        graph[a].push_back({b, cost});
-        graph[b].push_back({a, cost});
-    };
-
-    addCandidate(0, 1, 4);  // North Pit - Crusher
-    addCandidate(0, 2, 7);  // North Pit - Processing Plant
-    addCandidate(0, 3, 9);  // North Pit - Camp
-    addCandidate(1, 2, 2);  // Crusher - Processing Plant
-    addCandidate(1, 3, 6);  // Crusher - Camp
-    addCandidate(1, 4, 8);  // Crusher - Power Station
-    addCandidate(2, 3, 3);  // Processing Plant - Camp
-    addCandidate(2, 4, 5);  // Processing Plant - Power Station
-    addCandidate(3, 4, 4);  // Camp - Power Station
-
-    const int start = 0;
-    vector<bool> inNetwork(sites.size(), false);
-    priority_queue<Candidate, vector<Candidate>, greater<Candidate>> candidates;
-    vector<Candidate> selected;
-    long long totalCost = 0;
-
-    inNetwork[start] = true;
-
-    for (const Edge& edge : graph[start]) {
-        candidates.push({edge.cost, start, edge.destination});
-    }
-
-    while (!candidates.empty() && selected.size() < sites.size() - 1) {
-        Candidate edge = candidates.top();
-        candidates.pop();
-
-        if (inNetwork[edge.to]) {
-            continue;
+        // Select the unvisited vertex with minimum key
+        for (int v = 0; v < n; v++) {
+            if (!inMST[v] && key[v] < minKey) {
+                minKey = key[v];
+                u = v;
+            }
         }
 
-        inNetwork[edge.to] = true;
-        selected.push_back(edge);
-        totalCost += edge.cost;
+        // Check whether all sites are connected
+        if (u == -1) {
+            break;
+        }
 
-        for (const Edge& next : graph[edge.to]) {
-            if (!inNetwork[next.destination]) {
-                candidates.push({next.cost, edge.to, next.destination});
+        inMST[u] = true;
+
+        if (parent[u] != -1) {
+            cout << "Site " << parent[u] + 1
+                 << " - Site " << u + 1
+                 << "\t" << graph[parent[u]][u] << '\n';
+
+            totalCost += graph[parent[u]][u];
+            edgesSelected++;
+        }
+
+        // Update costs of adjacent unvisited vertices
+        for (int v = 0; v < n; v++) {
+            if (!inMST[v] &&
+                graph[u][v] != 0 &&
+                graph[u][v] < key[v]) {
+                key[v] = graph[u][v];
+                parent[v] = u;
             }
         }
     }
 
-    if (selected.size() != sites.size() - 1) {
-        cout << "Unable to connect all mining sites; the candidate network is disconnected.\n";
+    cout << "----------------------------------\n";
+
+    if (edgesSelected == n - 1) {
+        cout << "Minimum Total Network Cost: "
+             << totalCost << '\n';
+    } else {
+        cout << "Error: Not all mining sites can be connected.\n";
+    }
+}
+
+int main() {
+    int n, e;
+
+    cout << "MINING NETWORK OPTIMIZATION\n";
+    cout << "Enter number of mining sites: ";
+    cin >> n;
+
+    if (n <= 0) {
+        cout << "Invalid number of mining sites.\n";
         return 1;
     }
 
-    cout << "Selected pipelines/cables (minimum spanning tree):\n";
-    for (const Candidate& edge : selected) {
-        cout << sites[edge.from] << " -- " << sites[edge.to]
-             << " : " << edge.cost << '\n';
+    cout << "Enter number of candidate connections: ";
+    cin >> e;
+
+    if (e < 0) {
+        cout << "Invalid number of connections.\n";
+        return 1;
     }
 
-    cout << "Final network cost: " << totalCost << " cost units\n";
+    vector<vector<int>> graph(n, vector<int>(n, 0));
+
+    cout << "\nEnter connections as: site1 site2 cost\n";
+    cout << "Site numbers range from 1 to " << n << ".\n";
+
+    for (int i = 0; i < e; i++) {
+        int u, v, w;
+        cin >> u >> v >> w;
+
+        if (u < 1 || u > n || v < 1 || v > n ||
+            u == v || w <= 0) {
+            cout << "Invalid connection. Try again.\n";
+            i--;
+            continue;
+        }
+
+        // Store the minimum cost for duplicate connections
+        if (graph[u - 1][v - 1] == 0 ||
+            w < graph[u - 1][v - 1]) {
+            graph[u - 1][v - 1] = w;
+            graph[v - 1][u - 1] = w;
+        }
+    }
+
+    primMST(graph, n);
+
     return 0;
 }
+
+
