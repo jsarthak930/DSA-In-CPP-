@@ -1,7 +1,13 @@
-Create a graph of mining sites and candidate connections.
-Choose a starting site and add it to the network.
-Place its outgoing edges in a minimum-priority queue.
-Repeatedly select the lowest-cost edge that connects a site in the network to a site outside it.
-Add that edge and new site to the network; add the new site’s eligible edges to the queue.
-Continue until all sites are connected or no eligible edges remain.
-Display the selected edges and their total cost. If some sites remain disconnected, report that no complete network is possible.
+Prim’s Algorithm
+1. Start the program.
+2. Read the number of mining sites (vertices) and candidate connections (edges).
+3. Represent the mining network using a weighted adjacency matrix.
+4. Initialize all vertices as unvisited and set their minimum key values to infinity.
+5. Set the key value of the starting vertex to zero.
+6. Select the unvisited vertex with the smallest key value.
+7. Mark the selected vertex as visited.
+8. If the vertex has a parent, display the selected edge and add its weight to the total network cost.
+9. Update the key values of adjacent unvisited vertices whenever a lower-cost connection is found.
+10. Repeat steps 6–9 until all vertices are visited or no further connection is possible.
+11. If all vertices are connected, display the minimum total network cost. Otherwise, report that the network cannot connect all mining sites.
+12. Stop the program.
