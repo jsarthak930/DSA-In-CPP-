@@ -1,1 +1,5 @@
-ww
+Problem Statement
+Develop a C++ program to represent mining sites as vertices and candidate pipelines or cables as weighted edges.
+Implement Prim’s Algorithm to find the Minimum Spanning Tree (MST) that connects all mining sites with minimum total installation cost.
+Modify the program to update an edge weight and apply Prim’s Algorithm again,
+display each selected edge with its weight and running total cost, and detect disconnected graphs to determine whether a spanning tree can be formed.
