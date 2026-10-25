@@ -1,0 +1,177 @@
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+const long long INF = (1LL << 60);
+
+// Prim's Algorithm
+bool primMST(const vector<vector<long long> >& graph, int n) {
+    vector<long long> key(n, INF);
+    vector<int> parent(n, -1);
+    vector<bool> inMST(n, false);
+
+    key[0] = 0;
+
+    long long totalCost = 0;
+    int edgesSelected = 0;
+
+    cout << "\n========== MINIMUM SPANNING TREE ==========\n";
+    cout << "Selected Edges | Weight | Running Total\n";
+    cout << "-------------------------------------------\n";
+
+    for (int count = 0; count < n; count++) {
+        int u = -1;
+        long long minKey = INF;
+
+        // Find the minimum-cost unvisited vertex
+        for (int v = 0; v < n; v++) {
+            if (!inMST[v] && key[v] < minKey) {
+                minKey = key[v];
+                u = v;
+            }
+        }
+
+        // Stop if the graph is disconnected
+        if (u == -1) {
+            break;
+        }
+
+        inMST[u] = true;
+
+        if (parent[u] != -1) {
+            long long weight = graph[parent[u]][u];
+            totalCost += weight;
+            edgesSelected++;
+
+            cout << "Site " << parent[u] + 1
+                 << " - Site " << u + 1
+                 << " | " << weight
+                 << " | " << totalCost << "\n";
+        }
+
+        // Update adjacent vertices
+        for (int v = 0; v < n; v++) {
+            if (!inMST[v] &&
+                graph[u][v] != 0 &&
+                graph[u][v] < key[v]) {
+
+                key[v] = graph[u][v];
+                parent[v] = u;
+            }
+        }
+    }
+
+    cout << "-------------------------------------------\n";
+
+    if (edgesSelected == n - 1) {
+        cout << "Spanning tree can be formed.\n";
+        cout << "Minimum Total Network Cost: "
+             << totalCost << "\n";
+        return true;
+    }
+
+    cout << "Spanning tree cannot be formed.\n";
+    cout << "The graph is disconnected.\n";
+    return false;
+}
+
+int main() {
+    int n, e;
+
+    cout << "MINING NETWORK OPTIMIZATION\n";
+
+    cout << "Enter number of mining sites: ";
+    if (!(cin >> n) || n <= 0) {
+        cout << "Invalid number of sites.\n";
+        return 1;
+    }
+
+    cout << "Enter number of connections: ";
+    if (!(cin >> e) || e < 0) {
+        cout << "Invalid number of connections.\n";
+        return 1;
+    }
+
+    vector<vector<long long> > graph(
+        n, vector<long long>(n, 0)
+    );
+
+    cout << "Enter connections (site1 site2 weight):\n";
+
+    for (int i = 0; i < e; i++) {
+        int u, v;
+        long long w;
+
+        if (!(cin >> u >> v >> w)) {
+            cout << "Invalid connection input.\n";
+            return 1;
+        }
+
+        if (u < 1 || u > n ||
+            v < 1 || v > n ||
+            u == v || w <= 0) {
+            cout << "Invalid connection. Try again.\n";
+            i--;
+            continue;
+        }
+
+        // Keep the lowest weight for duplicate edges
+        if (graph[u - 1][v - 1] == 0 ||
+            w < graph[u - 1][v - 1]) {
+
+            graph[u - 1][v - 1] = w;
+            graph[v - 1][u - 1] = w;
+        }
+    }
+
+    // Calculate the initial minimum spanning tree
+    primMST(graph, n);
+
+    char choice;
+
+    cout << "\nDo you want to update an edge weight? (y/n): ";
+    cin >> choice;
+
+    while (choice == 'y' || choice == 'Y') {
+        int u, v;
+        long long newWeight;
+
+        cout << "Enter two site numbers: ";
+        if (!(cin >> u >> v)) {
+            cout << "Invalid site input.\n";
+            return 1;
+        }
+
+        if (u < 1 || u > n ||
+            v < 1 || v > n || u == v) {
+            cout << "Invalid site numbers.\n";
+        } else {
+            cout << "Enter new positive weight: ";
+
+            if (!(cin >> newWeight)) {
+                cout << "Invalid weight input.\n";
+                return 1;
+            }
+
+            if (newWeight <= 0) {
+                cout << "Weight must be positive.\n";
+            } else {
+                graph[u - 1][v - 1] = newWeight;
+                graph[v - 1][u - 1] = newWeight;
+
+                cout << "\nEdge updated successfully.\n";
+                cout << "Recalculating MST...\n";
+
+                // Apply Prim's Algorithm again
+                primMST(graph, n);
+            }
+        }
+
+        cout << "\nUpdate another edge? (y/n): ";
+        cin >> choice;
+    }
+
+    cout << "\nProgram completed.\n";
+    return 0;
+}
