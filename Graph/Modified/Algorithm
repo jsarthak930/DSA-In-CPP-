@@ -1,0 +1,17 @@
+Algorithm
+1. Start the program.
+2. Read the number of mining sites and candidate connections.
+3. Create a weighted adjacency matrix to represent the mining network.
+4. Initialize the key values to infinity, parent values to -1, and all vertices as unvisited.
+5. Set the key value of the starting vertex to zero.
+6. Select the unvisited vertex with the minimum key value.
+7. Mark the selected vertex as visited.
+8. If the selected vertex has a parent, display the edge, its weight, and the updated running total cost.
+9. Update the key and parent values of adjacent unvisited vertices whenever a lower-cost connection is found.
+10. Repeat the process until all vertices are visited or no further connection is possible.
+11. Check whether the number of selected edges equals \(V-1\). If yes, display the minimum total network cost; otherwise, report that the graph is disconnected.
+12. Ask the user whether an edge weight should be updated.
+13. If the user chooses yes, read the two site numbers and the new edge weight.
+14. Update the edge weight in the adjacency matrix and apply Prim’s Algorithm again.
+15. Repeat the update process if requested.
+16. Stop the program.
