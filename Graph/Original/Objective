@@ -1,4 +1,5 @@
-Represent each mining site as a vertex in a weighted graph.
-Represent each candidate pipeline or cable as an edge, with its cost as the weight.
-Use Prim’s algorithm to find a minimum spanning tree connecting all sites.
-Display the selected connections and the total network cost.
+To develop a C++ program that represents mining sites as vertices and
+candidate pipelines or cables as weighted edges in a graph.
+Apply Prim’s Algorithm to find the Minimum Spanning Tree (MST), 
+connecting all mining sites with the minimum total installation cost.
+Display the selected edges and the final minimum network cost.
